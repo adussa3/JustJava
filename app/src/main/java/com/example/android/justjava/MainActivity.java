@@ -23,7 +23,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static int quantity = 0;
     private static int price = 0;
-    
+
+    //private CheckBox whippedCreamCheckbox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
+    //private CheckBox chocolateCheckbox = (CheckBox) findViewById(R.id.chocolate_checkbox);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private String createOrderSummary() {
         String orderSummary = "Name: [INSERT NAME HERE] \n";
+//        orderSummary += "Add whipped cream? " + whippedCreamCheckbox.isChecked() + "\n";
+//        orderSummary += "Add chocolate? " + chocolateCheckbox.isChecked() + "\n";
         orderSummary += "Add whipped cream? " + hasWhippedCream() + "\n";
+        orderSummary += "Add chocolate? " + hasChocolate() + "\n";
         orderSummary += "Quantity: " + quantity + "\n";
         orderSummary += "Total: $" + price + "\n";
         orderSummary += "Thank you!";
@@ -113,12 +119,13 @@ public class MainActivity extends AppCompatActivity {
         orderSummaryTextView.setText(message);
     }
 
-    /**
-     *
-     * @return
-     */
     private boolean hasWhippedCream() {
-        CheckBox whippedCreamCheckBox = (findViewById(R.id.whipped_cream_checkbox));
-        return whippedCreamCheckBox.isChecked();
+        CheckBox whippedCreamCheckbox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
+        return whippedCreamCheckbox.isChecked();
+    }
+
+    private boolean hasChocolate() {
+        CheckBox chocolateCheckbox = (CheckBox) findViewById(R.id.chocolate_checkbox);
+        return chocolateCheckbox.isChecked();
     }
 }
