@@ -11,6 +11,7 @@ package com.example.android.justjava;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
@@ -22,22 +23,47 @@ public class MainActivity extends AppCompatActivity {
 
     private static int quantity = 0;
     private static int price = 0;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        display(quantity);
-        displayPrice(quantity);
+        display();
+        displayPrice();
     }
 
     /**
      * This method is called when the order button is clicked.
      */
     public void submitOrder(View view) {
-        display(quantity);
-        displayMessage("Total: $" + price + "\nThank you!");
+        display();
+
+        String orderSummery = createOrderSummary();
+        displayMessage(orderSummery);
+    }
+
+    /**
+     * Calculates the price of the order.
+     *
+     * @return total price
+     */
+    private int calculatePrice() {
+        return quantity * 5;
+    }
+
+    /**
+     * Create summary of order.
+     *
+     * @return text summary
+     */
+    private String createOrderSummary() {
+        String orderSummary = "Name: [INSERT NAME HERE] \n";
+        orderSummary += "Add whipped cream? " + hasWhippedCream() + "\n";
+        orderSummary += "Quantity: " + quantity + "\n";
+        orderSummary += "Total: $" + price + "\n";
+        orderSummary += "Thank you!";
+        return orderSummary;
     }
 
     /**
@@ -46,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
     public void increment(View view) {
         if (quantity < 99) {
             quantity++;
-            display(quantity);
-            displayPrice(quantity);
+            display();
+            displayPrice();
         }
     }
 
@@ -57,26 +83,25 @@ public class MainActivity extends AppCompatActivity {
     public void decrement(View view) {
         if (quantity > 0) {
             quantity--;
-            display(quantity);
-            displayPrice(quantity);
+            display();
+            displayPrice();
         }
     }
 
     /**
      * This method displays the given quantity value on the screen.
      */
-    private void display(int number) {
+    private void display() {
         TextView quantityTextView = (TextView) findViewById(R.id.quantity_text_view);
-        quantityTextView.setText("" + number);
+        quantityTextView.setText("" + quantity);
     }
 
     /**
      * This method displays the given price on the screen.
      */
-    private void displayPrice(int number) {
-        price = number * 5;
-
-        TextView priceTextView = (TextView) findViewById(R.id.price_text_view);
+    private void displayPrice() {
+        price = calculatePrice();
+        TextView priceTextView = (TextView) findViewById(R.id.order_summary_text_view);
         priceTextView.setText(NumberFormat.getCurrencyInstance().format(price));
     }
 
@@ -84,7 +109,16 @@ public class MainActivity extends AppCompatActivity {
      * This method displays the given text on the screen.
      */
     private void displayMessage(String message) {
-        TextView priceTextView = (TextView) findViewById(R.id.price_text_view);
-        priceTextView.setText(message);
+        TextView orderSummaryTextView = (TextView) findViewById(R.id.order_summary_text_view);
+        orderSummaryTextView.setText(message);
+    }
+
+    /**
+     *
+     * @return
+     */
+    private boolean hasWhippedCream() {
+        CheckBox whippedCreamCheckBox = (findViewById(R.id.whipped_cream_checkbox));
+        return whippedCreamCheckBox.isChecked();
     }
 }
