@@ -24,15 +24,23 @@ public class MainActivity extends AppCompatActivity {
     private static int quantity = 0;
     private static int price = 0;
 
-    //private CheckBox whippedCreamCheckbox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
-    //private CheckBox chocolateCheckbox = (CheckBox) findViewById(R.id.chocolate_checkbox);
+    /* Why can these these CheckBox variables be listed as static?
+    * Don't they call
+    * */
+    private static CheckBox whippedCreamCheckbox;
+    private static CheckBox chocolateCheckbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        display();
+        // Initialize Checkbox variables
+        whippedCreamCheckbox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
+        chocolateCheckbox = (CheckBox) findViewById(R.id.chocolate_checkbox);
+        
+        //
+        displayQuantity();
         displayPrice();
     }
 
@@ -40,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
      * This method is called when the order button is clicked.
      */
     public void submitOrder(View view) {
-        display();
+        displayQuantity();
 
         String orderSummery = createOrderSummary();
         displayMessage(orderSummery);
@@ -62,10 +70,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private String createOrderSummary() {
         String orderSummary = "Name: [INSERT NAME HERE] \n";
-//        orderSummary += "Add whipped cream? " + whippedCreamCheckbox.isChecked() + "\n";
-//        orderSummary += "Add chocolate? " + chocolateCheckbox.isChecked() + "\n";
-        orderSummary += "Add whipped cream? " + hasWhippedCream() + "\n";
-        orderSummary += "Add chocolate? " + hasChocolate() + "\n";
+        orderSummary += "Add whipped cream? " + whippedCreamCheckbox.isChecked() + "\n";
+        orderSummary += "Add chocolate? " + chocolateCheckbox.isChecked() + "\n";
+        //orderSummary += "Add whipped cream? " + hasWhippedCream() + "\n";
+        //orderSummary += "Add chocolate? " + hasChocolate() + "\n";
         orderSummary += "Quantity: " + quantity + "\n";
         orderSummary += "Total: $" + price + "\n";
         orderSummary += "Thank you!";
@@ -78,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     public void increment(View view) {
         if (quantity < 99) {
             quantity++;
-            display();
+            displayQuantity();
             displayPrice();
         }
     }
@@ -89,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     public void decrement(View view) {
         if (quantity > 0) {
             quantity--;
-            display();
+            displayQuantity();
             displayPrice();
         }
     }
@@ -97,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This method displays the given quantity value on the screen.
      */
-    private void display() {
+    private void displayQuantity() {
         TextView quantityTextView = (TextView) findViewById(R.id.quantity_text_view);
         quantityTextView.setText("" + quantity);
     }
@@ -117,15 +125,5 @@ public class MainActivity extends AppCompatActivity {
     private void displayMessage(String message) {
         TextView orderSummaryTextView = (TextView) findViewById(R.id.price_text_view);
         orderSummaryTextView.setText(message);
-    }
-
-    private boolean hasWhippedCream() {
-        CheckBox whippedCreamCheckbox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
-        return whippedCreamCheckbox.isChecked();
-    }
-
-    private boolean hasChocolate() {
-        CheckBox chocolateCheckbox = (CheckBox) findViewById(R.id.chocolate_checkbox);
-        return chocolateCheckbox.isChecked();
     }
 }
