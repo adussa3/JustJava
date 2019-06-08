@@ -25,7 +25,7 @@
     <string name="decrement" translatable="false">-</string>
 
     <!-- Header text for price [CHAR LIMIT=20] -->
-    <string name="price" >Price</string>
+    <string name="price">Price</string>
 
     <!-- Button text for order [CHAR LIMIT=20] -->
     <string name="order">Order</string>
