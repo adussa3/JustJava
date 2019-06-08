@@ -8,11 +8,16 @@
 
 package com.example.android.justjava;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.NumberFormat;
 
@@ -21,12 +26,9 @@ import java.text.NumberFormat;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private static int quantity = 0;
-    private static int price = 0;
+    private static int quantity = 1;
 
-    /* Why can these these CheckBox variables be listed as static?
-    * Don't they call
-    * */
+    /* Why can these these private class variables be listed as static? */
     private static CheckBox whippedCreamCheckbox;
     private static CheckBox chocolateCheckbox;
 
@@ -35,11 +37,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize Checkbox variables
+        // Initialize the private class variables
         whippedCreamCheckbox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
         chocolateCheckbox = (CheckBox) findViewById(R.id.chocolate_checkbox);
         
-        //
+        // Display the current
         displayQuantity();
         displayPrice();
     }
@@ -50,8 +52,13 @@ public class MainActivity extends AppCompatActivity {
     public void submitOrder(View view) {
         displayQuantity();
 
-        String orderSummery = createOrderSummary();
-        displayMessage(orderSummery);
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.order_summary_email_subject, getName()));
+        intent.putExtra(Intent.EXTRA_TEXT, createOrderSummary());
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     /**
@@ -60,7 +67,17 @@ public class MainActivity extends AppCompatActivity {
      * @return total price
      */
     private int calculatePrice() {
-        return quantity * 5;
+        int price = 5;
+
+        if (whippedCreamCheckbox.isChecked()) {
+            price += 1;
+        }
+
+        if (chocolateCheckbox.isChecked()) {
+            price += 2;
+        }
+
+        return quantity * price;
     }
 
     /**
@@ -69,14 +86,18 @@ public class MainActivity extends AppCompatActivity {
      * @return text summary
      */
     private String createOrderSummary() {
-        String orderSummary = "Name: [INSERT NAME HERE] \n";
-        orderSummary += "Add whipped cream? " + whippedCreamCheckbox.isChecked() + "\n";
-        orderSummary += "Add chocolate? " + chocolateCheckbox.isChecked() + "\n";
-        //orderSummary += "Add whipped cream? " + hasWhippedCream() + "\n";
-        //orderSummary += "Add chocolate? " + hasChocolate() + "\n";
-        orderSummary += "Quantity: " + quantity + "\n";
-        orderSummary += "Total: $" + price + "\n";
-        orderSummary += "Thank you!";
+        if (getName().equals("")) {
+            Toast toast = Toast.makeText(this, getResources().getString(R.string.enter_name), Toast.LENGTH_SHORT);
+            toast.show();
+            return null;
+        }
+
+        String orderSummary = getResources().getString(R.string.order_summary_name, getName()) + "\n";
+        orderSummary += getResources().getString(R.string.order_summary_whipped_cream, whippedCreamCheckbox.isChecked() ? true : false) + "\n";
+        orderSummary += getResources().getString(R.string.order_summary_chocolate, chocolateCheckbox.isChecked() ? true : false) + "\n";
+        orderSummary += getResources().getString(R.string.order_summary_quantity, quantity) + "\n";
+        orderSummary += getResources().getString(R.string.order_summary_price, NumberFormat.getCurrencyInstance().format(calculatePrice())) + "\n";
+        orderSummary += getResources().getString(R.string.thank_you);
         return orderSummary;
     }
 
@@ -88,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
             quantity++;
             displayQuantity();
             displayPrice();
+        } else {
+            Toast toast = Toast.makeText(this, getResources().getString(R.string.more_than_99), Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 
@@ -95,10 +119,13 @@ public class MainActivity extends AppCompatActivity {
      * This method is called when the minus button is clicked.
      */
     public void decrement(View view) {
-        if (quantity > 0) {
+        if (quantity > 1) {
             quantity--;
             displayQuantity();
             displayPrice();
+        } else {
+            Toast toast = Toast.makeText(this, getResources().getString(R.string.less_than_1), Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 
@@ -114,16 +141,24 @@ public class MainActivity extends AppCompatActivity {
      * This method displays the given price on the screen.
      */
     private void displayPrice() {
-        price = calculatePrice();
         TextView priceTextView = (TextView) findViewById(R.id.price_text_view);
-        priceTextView.setText(NumberFormat.getCurrencyInstance().format(price));
+        priceTextView.setText(NumberFormat.getCurrencyInstance().format(calculatePrice()));
     }
 
     /**
-     * This method displays the given text on the screen.
+     *
+     * @param view
      */
-    private void displayMessage(String message) {
-        TextView orderSummaryTextView = (TextView) findViewById(R.id.price_text_view);
-        orderSummaryTextView.setText(message);
+    public void displayPrice(View view) {
+        displayPrice();
+    }
+
+    /**
+     *
+     */
+    private String getName() {
+        EditText nameField = (EditText) findViewById(R.id.name_field);
+        String name = nameField.getText().toString().trim();
+        return name;
     }
 }
